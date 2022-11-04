@@ -1,3 +1,7 @@
+import 'package:get/get.dart';
+import 'package:instagram_clone_flutter_firebase/controllers/user_controllers.dart';
+import 'package:instagram_clone_flutter_firebase/resources/firestore_methods.dart';
+import 'package:instagram_clone_flutter_firebase/screens/comments_screen.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -7,6 +11,61 @@ import 'package:instagram_clone_flutter_firebase/utils/colors.dart';
 class PostCard extends StatelessWidget {
   final PostModel postData;
   const PostCard({super.key, required this.postData});
+
+  showPostOption(BuildContext context) {
+    // NOTE you can create BottomSheet both native and using GetX
+    // showModalBottomSheet(
+    //   context: context,
+    //   builder: (BuildContext context) => Column(
+    //     children: [
+    //       TextButton(onPressed: () {}, child: const Text("Delete")),
+    //       TextButton(onPressed: () {}, child: const Text("Block User")),
+    //       TextButton(onPressed: () {}, child: const Text("Report")),
+    //       TextButton(onPressed: () {}, child: const Text("Close"))
+    //     ],
+    //   ),
+    // );
+    Get.bottomSheet(
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(40),
+              ),
+              onPressed: () {},
+              child: const Text('Delete'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(40),
+              ),
+              onPressed: () {},
+              child: const Text('Delete'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(40),
+              ),
+              onPressed: () => Get.back(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.black,
+        elevation: 1);
+  }
+
+  showCommentsScreen() {
+    Get.to(() => CommentsScreen(
+          postId: postData.postId,
+          profileImageUrl: postData.profileImageUrl,
+          uid: postData.uid,
+          username: postData.username,
+        ));
+  }
+
+  showShare() {}
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +90,9 @@ class PostCard extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
+              IconButton(
+                  onPressed: () => showPostOption(context),
+                  icon: const Icon(Icons.more_vert))
             ],
           ),
         ),
@@ -48,22 +109,31 @@ class PostCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.favorite, color: Colors.red),
+                  GetBuilder<UserController>(
+                    init: UserController(),
+                    builder: (_) {
+                      return IconButton(
+                        onPressed: () => FirestoreMethods().likeDislikePost(
+                            _.user.uid, postData.postId, postData.likes),
+                        icon: postData.likes.contains(_.user.uid)
+                            ? const Icon(Icons.favorite, color: Colors.red)
+                            : const Icon(Icons.favorite_outline,
+                                color: primaryColor),
+                      );
+                    },
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: showCommentsScreen,
                     icon: const Icon(Icons.chat_bubble_outline),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: showShare,
                     icon: const Icon(Icons.share),
                   )
                 ],
@@ -76,25 +146,12 @@ class PostCard extends StatelessWidget {
             ],
           ),
         ),
-
         // likes
         postData.likes.isNotEmpty
-            ? Padding(
+            ? Container(
+                width: double.infinity,
                 padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-                child: Row(
-                  children: [
-                    const Text("Liked by "),
-                    Text(
-                      postData.likes[0],
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const Text(" and "),
-                    Text(
-                      "${postData.likes.length}others",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                child: Text("${postData.likes.length} likes"),
               )
             : Container(),
         // comments

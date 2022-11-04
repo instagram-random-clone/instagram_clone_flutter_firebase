@@ -3,14 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:instagram_clone_flutter_firebase/controllers/user_controllers.dart';
 import 'responsive/mobile_screen_layout.dart';
 import 'responsive/responsive_layout_screen.dart';
 import 'responsive/web_screen_layout.dart';
 import 'utils/colors.dart';
-
 import 'screens/login_screen.dart';
-import 'screens/signup_screen.dart';
 import 'utils/firebaseOptionsWeb.dart';
 
 void main() async {

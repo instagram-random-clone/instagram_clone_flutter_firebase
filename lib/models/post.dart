@@ -7,7 +7,7 @@ class PostModel {
   String uid;
   String profileImageUrl;
   String username;
-  String postIs;
+  String postId;
   DateTime datePublished;
   String postUrl;
   List likes;
@@ -18,7 +18,7 @@ class PostModel {
     required this.datePublished,
     required this.likes,
     required this.profileImageUrl,
-    required this.postIs,
+    required this.postId,
     required this.postUrl,
     required this.username,
   });
@@ -31,7 +31,7 @@ class PostModel {
         "profileImageUrl": profileImageUrl,
         "likes": likes,
         "datePublished": datePublished,
-        "postIs": postIs,
+        "postId": postId,
       };
 
   static PostModel fromSnapshot(DocumentSnapshot snapshot) {
@@ -43,7 +43,7 @@ class PostModel {
         postUrl: snap["postUrl"],
         profileImageUrl: snap["profileImageUrl"],
         likes: snap["likes"],
-        postIs: snap["postIs"],
+        postId: snap["postId"],
         datePublished: (snap["datePublished"] as Timestamp).toDate());
   }
 }
